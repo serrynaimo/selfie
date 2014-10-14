@@ -1,7 +1,7 @@
-Selfie Remote Control Dashboard with SkywayJS and WebRTC
+Selfie Remote Control Dashboard with SkylinkJS and WebRTC
 ========================================================
 
-> Find out more about [WebRTC and SkywayJS](http://temasys.github.io) and [get your own API key](http://developer.temasys.com.sg) to build something yourself
+> Find out more about [WebRTC and SkylinkJS](http://temasys.github.io) and [get your own API key](http://developer.temasys.com.sg) to build something yourself
 
 ![Selfie Remote Control Dashboard](http://serrynaimo.github.io/selfie/selfies.jpg)
 

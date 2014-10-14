@@ -38,18 +38,18 @@
     </section>
 
     <script type="text/javascript" src="http://l2.io/ip.js?var=myip"></script>
-    <script type="text/javascript" src="http://cdn.temasys.com.sg/skyway/skywayjs/0.5.x/skyway.complete.min.js"></script>
+    <script type="text/javascript" src="http://cdn.temasys.com.sg/skylink/skylinkjs/0.5.x/skylink.complete.min.js"></script>
     <script type="text/javascript">
 
     var phonePeerId = null;
 
-    var skyway = new Skyway(),
+    var skylink = new Skylink(),
         $captures = document.getElementById('captures'),
         $btn = document.getElementById('captureBtn'),
         $video = document.getElementById('phone'),
         $status = document.getElementById('status');
 
-    skyway.on('incomingStream', function (peerId, stream, isSelf) {
+    skylink.on('incomingStream', function (peerId, stream, isSelf) {
         if(peerId === phonePeerId) {
             attachMediaStream($video, stream);
             $status.innerText = "Ready to capture";
@@ -57,7 +57,7 @@
         }
     });
 
-    skyway.on('incomingMessage', function (message, peerId, peerInfo, isSelf) {
+    skylink.on('incomingMessage', function (message, peerId, peerInfo, isSelf) {
         if(peerId === phonePeerId && message.content === '/ready') {
             $status.innerText = "Ready to capture";
             $btn.disabled = false;
@@ -67,12 +67,12 @@
         }
     });
 
-    skyway.on('dataTransferState', function (state, transferId, peerId, transferInfo, error) {
-        if(state === skyway.DATA_TRANSFER_STATE.UPLOAD_REQUEST) {
-            skyway.respondBlobRequest(peerId, true);
+    skylink.on('dataTransferState', function (state, transferId, peerId, transferInfo, error) {
+        if(state === skylink.DATA_TRANSFER_STATE.UPLOAD_REQUEST) {
+            skylink.respondBlobRequest(peerId, true);
             $status.innerText = "Receiving image...";
         }
-        else if(state === skyway.DATA_TRANSFER_STATE.DOWNLOAD_COMPLETED) {
+        else if(state === skylink.DATA_TRANSFER_STATE.DOWNLOAD_COMPLETED) {
             var img = document.createElement('img');
             img.src = URL.createObjectURL(transferInfo.data)
 
@@ -87,38 +87,38 @@
         }
     });
 
-    skyway.on('readyStateChange', function(state) {
+    skylink.on('readyStateChange', function(state) {
         if(state === 2) {
             $status.innerText = "Waiting for phone...";
         }
     });
 
-    skyway.on('peerJoined', function (peerId, peerInfo, isSelf) {
+    skylink.on('peerJoined', function (peerId, peerInfo, isSelf) {
         if(peerInfo.userData.type === 'phone') {
             phonePeerId = peerId;
             $status.innerText = "Phone joined. Loading preview...";
         }
     });
 
-    skyway.on('peerLeft', function (peerId, peerInfo, isSelf) {
+    skylink.on('peerLeft', function (peerId, peerInfo, isSelf) {
         if(peerId === phonePeerId) {
             phonePeerId = null;
             $status.innerText = "Waiting for phone...";
         }
     });
 
-    skyway.init({
+    skylink.init({
         apiKey: '774b477f-dc20-4374-ba13-3eda09414c28',
         defaultRoom: myip
     });
-    skyway.joinRoom();
+    skylink.joinRoom();
 
 
     function capture() {
         if(!$btn.disabled) {
             $status.innerText = "Capturing...";
             $btn.disabled = true;
-            skyway.sendP2PMessage('/capture');
+            skylink.sendP2PMessage('/capture');
         }
     }
 

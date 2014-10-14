@@ -35,13 +35,13 @@
     <canvas id="photo" style="display: none;" width="1024" height="768"></canvas>
 
     <script type="text/javascript" src="http://l2.io/ip.js?var=myip"></script>
-    <script type="text/javascript" src="http://cdn.temasys.com.sg/skyway/skywayjs/0.5.x/skyway.complete.min.js"></script>
+    <script type="text/javascript" src="http://cdn.temasys.com.sg/skylink/skylinkjs/0.5.x/skylink.complete.min.js"></script>
     <script type="text/javascript">
 
     var peers = [],
         joinTime = (new Date()).getTime();
 
-    var skyway = new Skyway(),
+    var skylink = new Skylink(),
         $status = document.getElementById('status'),
         $video = document.getElementById('preview'),
         $photo = document.getElementById('photo');
@@ -101,7 +101,7 @@
         return new Blob([uInt8Array], {type: contentType});
     }
 
-    skyway.on('incomingMessage', function (message, peerId, peerInfo, isSelf) {
+    skylink.on('incomingMessage', function (message, peerId, peerInfo, isSelf) {
         if(message.content === '/capture') {
             $status.innerText = "Capturing...";
 
@@ -125,28 +125,28 @@
 
             var blob = dataURL2Blob($photo.toDataURL('image/jpeg', 0.8));
 
-            skyway.sendBlobData(blob, {
+            skylink.sendBlobData(blob, {
                 size: blob.size,
                 name: (new Date()).toString()
             }, peerId);
         }
     });
 
-    skyway.on('mediaAccessSuccess', function (stream) {
+    skylink.on('mediaAccessSuccess', function (stream) {
         attachMediaStream($video, stream);
         updatePeerInfo();
     });
 
-    skyway.on('mediaAccessError', function () {
+    skylink.on('mediaAccessError', function () {
         $status.innerText = "This will only work with camera access.";
     });
 
-    skyway.on('dataTransferState', function (state, transferId, peerId, transferInfo, error) {
-        if(state === skyway.DATA_TRANSFER_STATE.UPLOAD_COMPLETED) {
+    skylink.on('dataTransferState', function (state, transferId, peerId, transferInfo, error) {
+        if(state === skylink.DATA_TRANSFER_STATE.UPLOAD_COMPLETED) {
             updatePeerInfo();
-            skyway.sendP2PMessage('/ready');
+            skylink.sendP2PMessage('/ready');
         }
-        else if(state === skyway.DATA_TRANSFER_STATE.UPLOAD_STARTED) {
+        else if(state === skylink.DATA_TRANSFER_STATE.UPLOAD_STARTED) {
             $status.innerText = "Sending image...";
         }
         else if(error) {
@@ -154,16 +154,16 @@
         }
     });
 
-    skyway.on('readyStateChange', function(state) {
+    skylink.on('readyStateChange', function(state) {
         if(state === 2) {
             $status.innerText = "Please share access to your camera.";
         }
     });
 
-    skyway.on('peerJoined', function (peerId, peerInfo, isSelf) {
+    skylink.on('peerJoined', function (peerId, peerInfo, isSelf) {
         if(!isSelf) {
             if(peerInfo.userData.type === 'phone' && peerInfo.userData.joined < joinTime) {
-                skyway.leaveRoom();
+                skylink.leaveRoom();
                 $video.src = '';
                 $status.innerText = "There is already a camera on this network";
             }
@@ -174,7 +174,7 @@
         }
     });
 
-    skyway.on('peerLeft', function (peerId, peerInfo, isSelf) {
+    skylink.on('peerLeft', function (peerId, peerInfo, isSelf) {
         if(!isSelf) {
             var npeers = [];
             for(peer in peers) {
@@ -184,21 +184,21 @@
             }
             peers = npeers;
 
-            if(skyway._in_room) {
+            if(skylink._in_room) {
                 updatePeerInfo();
             }
         }
     });
 
-    skyway.init({
+    skylink.init({
         apiKey: '774b477f-dc20-4374-ba13-3eda09414c28',
         defaultRoom: myip
     });
-    skyway.setUserData({
+    skylink.setUserData({
         type: 'phone',
         joined: joinTime
     });
-    skyway.joinRoom({video: true});
+    skylink.joinRoom({video: true});
 
 
 
